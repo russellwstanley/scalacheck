@@ -103,6 +103,8 @@ trait Commands {
      *  [[[Command!.postCondition* postCondition]]] method. */
     type Result
 
+    var res : Try[Result] = _
+
     /** Executes the command in the system under test, and returns a
      *  representation of the result of the command run. The result value
      *  is later used for verifying that the command behaved according
@@ -128,8 +130,8 @@ trait Commands {
      *  dependant Result type. */
     private[Commands] def runPC(sut: Sut): (Try[String], State => Prop) = {
       import Prop.BooleanOperators
-      val r = Try(run(sut))
-      (r.map(_.toString), s => preCondition(s) ==> postCondition(s,r))
+      res = Try(run(sut))
+      (res.map(_.toString), s => preCondition(s) ==> postCondition(s,res))
     }
   }
 
